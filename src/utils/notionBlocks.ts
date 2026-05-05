@@ -1040,6 +1040,9 @@ function looksLikeInlineEquation(expression: string): boolean {
 }
 
 function isStrongKatexExpression(expression: string): boolean {
+  if (looksLikeSimpleKatexExpression(expression)) {
+    return true;
+  }
   if (!looksLikeInlineEquation(expression)) {
     return false;
   }
@@ -1053,6 +1056,23 @@ function isStrongKatexExpression(expression: string): boolean {
   }
 
   return /[_^{}]/.test(expression) && /[=+\-*/\\]/.test(expression);
+}
+
+function looksLikeSimpleKatexExpression(expression: string): boolean {
+  const text = expression.trim();
+  if (!text || text.length > 500) {
+    return false;
+  }
+
+  if (!/^[A-Za-z0-9\u0370-\u03ff\s()[\]|,.;:'′]+$/.test(text)) {
+    return false;
+  }
+
+  if (/^[A-Za-z\u0370-\u03ff]$/.test(text)) {
+    return true;
+  }
+
+  return /[()[\]|]/.test(text) && /[A-Za-z\u0370-\u03ff]/.test(text);
 }
 
 function isSupportedExternalImageUrl(url: string): boolean {

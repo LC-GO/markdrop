@@ -599,7 +599,26 @@ function mathFallbackText(element: Element, display: boolean): string {
 
 function looksLikeMathExpression(value: string): boolean {
   const text = value.trim();
+  if (!text || text.length >= 3000) {
+    return false;
+  }
+
+  if (looksLikeSimpleMathExpression(text)) {
+    return true;
+  }
   return text.length > 0 && text.length < 3000 && /[\\^_{}=<>+\-*/∑∏√≤≥≈≠∞α-ωΑ-Ω]/.test(text);
+}
+
+function looksLikeSimpleMathExpression(text: string): boolean {
+  if (!/^[A-Za-z0-9\u0370-\u03ff\s()[\]|,.;:'′]+$/.test(text)) {
+    return false;
+  }
+
+  if (/^[A-Za-z\u0370-\u03ff]$/.test(text)) {
+    return true;
+  }
+
+  return /[()[\]|]/.test(text) && /[A-Za-z\u0370-\u03ff]/.test(text);
 }
 
 function selectBestMathExpression(candidates: string[]): string {
