@@ -20,7 +20,7 @@ Markdrop does not run a backend service. Tokens, secrets, and target configurati
 - Configure several save locations and choose the target at save time.
 - Product UI supports `Auto / 中文 / English`; Auto follows the browser language.
 
-Supported AI platforms include ChatGPT, Claude, DeepSeek, Doubao, Gemini, Kimi, and Qianwen/Tongyi.
+Supported AI platforms include ChatGPT, Claude, Gemini, DeepSeek, Doubao, and Qianwen.
 
 ## Usage
 

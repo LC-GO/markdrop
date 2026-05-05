@@ -28,11 +28,10 @@
 - 在以下 AI 平台的每条回答旁，自动注入「Save」按钮：
   - ChatGPT（chat.openai.com）
   - Claude（claude.ai）
-  - 豆包（doubao.com）
-  - DeepSeek（chat.deepseek.com）
-  - Kimi（kimi.moonshot.cn）
-  - 通义千问（tongyi.aliyun.com）
   - Gemini（gemini.google.com）
+  - DeepSeek（chat.deepseek.com）
+  - Doubao（doubao.com）
+  - Qianwen（qianwen.com）
   - 可扩展支持更多平台
 - 点击按钮，将该条完整回答转为 Markdown，打开保存面板，用户选择常用存储目录后保存至笔记平台
 - 按钮样式轻量，不干扰原平台 UI
@@ -144,7 +143,6 @@ markdrop/
 │       ├── claude.js
 │       ├── doubao.js
 │       ├── deepseek.js
-│       ├── kimi.js
 │       ├── tongyi.js
 │       └── gemini.js
 ├── popup/
@@ -192,7 +190,7 @@ background service-worker 读取本地存储的 Token 和目录配置
 第一版只交付以下功能，其余进入 Backlog：
 
 - [x] 划词保存（浮动按钮 + 右键菜单）
-- [x] AI 平台回答保存按钮（ChatGPT / Claude / 豆包 / DeepSeek / Kimi / 通义千问 / Gemini）
+- [x] AI 平台回答保存按钮（ChatGPT / Claude / Gemini / DeepSeek / Doubao / Qianwen）
 - [x] 保存面板（选择常用存储目录 + 修改标题 + 附加来源 URL）
 - [x] Notion 对接（Internal Integration Token + 常用目录 + 创建页面）
 - [x] HTML → Markdown 转换（基础格式）

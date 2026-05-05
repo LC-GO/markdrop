@@ -32,11 +32,10 @@
 
 - ChatGPT
 - Claude
-- DeepSeek
-- 豆包
 - Gemini
-- Kimi
-- 千问/通义
+- DeepSeek
+- Doubao
+- Qianwen
 
 每个平台保存一段包含下列格式的代表性回答：
 

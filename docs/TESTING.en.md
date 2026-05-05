@@ -32,11 +32,10 @@ For each supported AI platform, confirm that one save button appears below each 
 
 - ChatGPT
 - Claude
+- Gemini
 - DeepSeek
 - Doubao
-- Gemini
-- Kimi
-- Qianwen/Tongyi
+- Qianwen
 
 For each platform, save a representative answer containing:
 

@@ -20,7 +20,7 @@ Markdrop 不提供后端服务。Token、密钥和保存位置配置只保存在
 - 配置多个保存位置，并在保存时选择目标。
 - 产品 UI 支持 `Auto / 中文 / English`，默认跟随浏览器语言。
 
-支持的 AI 平台包括 ChatGPT、Claude、DeepSeek、豆包、Gemini、Kimi、千问/通义。
+支持的 AI 平台包括 ChatGPT、Claude、Gemini、DeepSeek、Doubao、Qianwen。
 
 ## 使用方式
 

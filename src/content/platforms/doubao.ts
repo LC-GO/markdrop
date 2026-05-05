@@ -2,7 +2,7 @@ import { injectSaveButton } from "./inject";
 import type { AiPlatformAdapter, AiPlatformContext } from "./types";
 
 export const doubaoAdapter: AiPlatformAdapter = {
-  name: "豆包",
+  name: "Doubao",
   matches(hostname) {
     return hostname === "www.doubao.com" || hostname === "doubao.com" || hostname.endsWith(".doubao.com");
   },
@@ -17,7 +17,7 @@ export const doubaoAdapter: AiPlatformAdapter = {
       }
 
       const answerElement = findAnswerElement(node);
-      injectSaveButton(answerElement, "豆包", context, answerElement);
+      injectSaveButton(answerElement, "Doubao", context, answerElement);
     });
   },
 };

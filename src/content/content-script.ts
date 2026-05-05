@@ -832,7 +832,6 @@ function isSupportedAiHost(hostname: string): boolean {
     hostname.endsWith(".claude.ai") ||
     hostname.includes("doubao.com") ||
     hostname.includes("deepseek.com") ||
-    hostname.includes("kimi.com") ||
     isTongyiHost(hostname)
   );
 }
@@ -887,15 +886,11 @@ function platformNameForHost(hostname: string): string {
   }
 
   if (hostname === "www.doubao.com" || hostname === "doubao.com" || hostname.endsWith(".doubao.com")) {
-    return "豆包";
+    return "Doubao";
   }
 
   if (hostname === "chat.deepseek.com" || hostname.endsWith(".deepseek.com")) {
     return "DeepSeek";
-  }
-
-  if (hostname === "kimi.moonshot.cn" || hostname.endsWith(".moonshot.cn")) {
-    return "Kimi";
   }
 
   if (
@@ -911,7 +906,7 @@ function platformNameForHost(hostname: string): string {
     hostname.endsWith(".tongyi.com") ||
     hostname.includes("qwen")
   ) {
-    return "千问";
+    return "Qianwen";
   }
 
   return "ChatGPT";

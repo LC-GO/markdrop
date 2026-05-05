@@ -4,7 +4,6 @@ import { deepseekAdapter } from "./deepseek";
 import { doubaoAdapter } from "./doubao";
 import { geminiAdapter } from "./gemini";
 import { injectSaveButton } from "./inject";
-import { kimiAdapter } from "./kimi";
 import { tongyiAdapter } from "./tongyi";
 import type { AiPlatformAdapter, AiPlatformContext } from "./types";
 
@@ -13,7 +12,6 @@ const adapters: AiPlatformAdapter[] = [
   claudeAdapter,
   doubaoAdapter,
   deepseekAdapter,
-  kimiAdapter,
   tongyiAdapter,
   geminiAdapter,
 ];

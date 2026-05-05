@@ -2,7 +2,7 @@ import { scanGenericAiAnswers } from "./shared";
 import type { AiPlatformAdapter, AiPlatformContext } from "./types";
 
 export const tongyiAdapter: AiPlatformAdapter = {
-  name: "Tongyi",
+  name: "Qianwen",
   matches(hostname) {
     return (
       hostname === "tongyi.aliyun.com" ||
@@ -15,7 +15,7 @@ export const tongyiAdapter: AiPlatformAdapter = {
   },
   scan(context: AiPlatformContext) {
     scanGenericAiAnswers(context, {
-      platformName: "Tongyi",
+      platformName: "Qianwen",
       selectors: [
         "[class*='markdown']",
         "[class*='prose']",

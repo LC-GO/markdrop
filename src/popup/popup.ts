@@ -328,7 +328,6 @@ function isAiPageUrl(url: string): boolean {
       hostname.endsWith(".claude.ai") ||
       hostname.includes("doubao.com") ||
       hostname.includes("deepseek.com") ||
-      hostname.includes("kimi.com") ||
       hostname.includes("tongyi.com") ||
       hostname.includes("qianwen.com") ||
       hostname.includes("qwen")

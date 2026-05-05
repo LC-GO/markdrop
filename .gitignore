@@ -11,3 +11,4 @@ yarn-error.log*
 pnpm-debug.log*
 *.log
 .DS_Store
+markdrop-*.zip
