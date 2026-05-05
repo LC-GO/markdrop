@@ -29,6 +29,16 @@ Markdrop 不提供后端服务。Token、密钥和保存位置配置只保存在
 
 保存弹窗中可以编辑标题、选择目标、决定是否附带来源 URL，并预览捕获到的 Markdown。
 
+## 截图
+
+### 保存 AI 回答
+
+![Markdrop 保存弹窗](docs/assets/markdrop-save-dialog.png)
+
+### 保存结果
+
+![Markdrop 保存结果](docs/assets/markdrop-saved-result.png)
+
 ## 安装方式一：下载 Release 包，推荐普通用户
 
 如果你只是想安装使用 Markdrop，推荐从 GitHub Releases 下载打包好的扩展包。

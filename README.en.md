@@ -29,6 +29,16 @@ Supported AI platforms include ChatGPT, Claude, Gemini, DeepSeek, Doubao, and Qi
 
 The save dialog lets you edit the title, choose a destination, include or omit the source URL, and preview the captured Markdown.
 
+## Screenshots
+
+### Save AI answers
+
+![Markdrop save dialog](docs/assets/markdrop-save-dialog.png)
+
+### Saved result
+
+![Markdrop saved result](docs/assets/markdrop-saved-result.png)
+
 ## Install Option 1: Download A Release, Recommended For Users
 
 If you only want to install and use Markdrop, download a packaged extension from GitHub Releases.
