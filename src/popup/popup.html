@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Markdrop</title>
+    <link rel="stylesheet" href="./popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Markdrop</h1>
+        <p id="summary" data-i18n="popup.summary.loading">读取设置中...</p>
+      </header>
+      <p id="last-save" class="last-save"></p>
+      <section class="diagnostics">
+        <strong data-i18n="popup.currentPage">当前页面</strong>
+        <p id="page-diagnostic" data-i18n="popup.detecting">正在检测当前标签页...</p>
+        <button id="diagnose-page" type="button" class="secondary" data-i18n="popup.diagnose">重新检测 / 注入</button>
+        <button id="copy-capture-debug" type="button" class="secondary" data-i18n="popup.copyCaptureDebug">Copy captured Markdown</button>
+      </section>
+      <button id="open-options" type="button" data-i18n="popup.openOptions">设置保存位置</button>
+    </main>
+    <script src="./popup.js"></script>
+  </body>
+</html>
