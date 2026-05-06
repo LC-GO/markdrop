@@ -42,7 +42,7 @@ export async function saveMarkdownToNotion(
 
   const body = buildCreatePageBody(resolvedTarget.target, request);
   const apiVersion = getApiVersion(resolvedTarget.target);
-  const response = await fetch("https://api.notion.com/v1/pages", {
+  const response = await fetchNotionApi("https://api.notion.com/v1/pages", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${settings.notionToken}`,
@@ -98,7 +98,7 @@ export async function testNotionTarget(token: string, target: SaveTarget): Promi
     };
   }
 
-  const response = await fetch(getRetrieveUrl(target), {
+  const response = await fetchNotionApi(getRetrieveUrl(target), {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -261,7 +261,7 @@ async function retrieveNotionObject(
   url: string,
   apiVersion: string,
 ): Promise<{ response: Response; data: NotionPageResponse }> {
-  const response = await fetch(url, {
+  const response = await fetchNotionApi(url, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -292,7 +292,7 @@ async function appendBlocks(
     return { ok: true };
   }
 
-  const response = await fetch(`https://api.notion.com/v1/blocks/${blockId}/children`, {
+  const response = await fetchNotionApi(`https://api.notion.com/v1/blocks/${blockId}/children`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -312,6 +312,41 @@ async function appendBlocks(
   }
 
   return { ok: true };
+}
+
+async function fetchNotionApi(input: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(input, init);
+  } catch (error) {
+    const raw = error instanceof Error ? error.message : String(error);
+    const hasPermission = await hasNotionApiHostPermission();
+
+    if (hasPermission === false) {
+      throw new Error(
+        `Markdrop does not have permission to access the Notion API. In edge://extensions, open Markdrop details, allow site access for all sites, then reload the extension. Original error: ${raw}`,
+      );
+    }
+
+    throw new Error(
+      `Notion API request failed before receiving a response. If https://api.notion.com/v1/users/me opens in Edge, reload Markdrop in edge://extensions or reinstall the unpacked extension folder. Original error: ${raw}`,
+    );
+  }
+}
+
+async function hasNotionApiHostPermission(): Promise<boolean | null> {
+  if (typeof chrome === "undefined" || !chrome.permissions?.contains) {
+    return null;
+  }
+
+  return new Promise((resolve) => {
+    try {
+      chrome.permissions.contains({ origins: ["https://api.notion.com/*"] }, (result) => {
+        resolve(result);
+      });
+    } catch {
+      resolve(null);
+    }
+  });
 }
 
 function getApiVersion(target: NotionSaveTarget): string {
