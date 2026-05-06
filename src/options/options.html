@@ -199,7 +199,11 @@
             <p class="hint" data-i18n="options.titleTemplateHelp">可用变量：{pageTitle}、{date}、{time}</p>
             <div class="advanced-actions">
               <button id="copy-diagnostics" type="button" class="secondary" data-i18n="options.copyDiagnostics">复制诊断信息</button>
+              <button id="export-config" type="button" class="secondary" data-i18n="options.exportConfig">导出配置</button>
+              <button id="import-config" type="button" class="secondary" data-i18n="options.importConfig">导入配置</button>
+              <input id="import-config-file" type="file" accept="application/json,.json" hidden>
             </div>
+            <p class="hint config-transfer-warning" data-i18n="options.configTransferWarning">导出的 JSON 会包含 Token、App Secret、API Key、OAuth token 和保存位置，仅用于个人备份或迁移，请不要公开分享。</p>
           </details>
 
           <details class="section advanced-section privacy-section">

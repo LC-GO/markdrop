@@ -1,7 +1,7 @@
 import { MARKDROP_BUILD_ID } from "../utils/buildInfo";
 import { formatUserFacingError } from "../utils/errors";
 import { applyElementTranslations, getI18n, type I18n, type LanguagePreference } from "../utils/i18n";
-import { getSettings, saveSettings } from "../utils/storage";
+import { defaultSettings, getSettings, saveSettings } from "../utils/storage";
 import { parseFeishuTargetInput } from "../integrations/feishu/links";
 import {
   isFeishuTarget,
@@ -74,6 +74,9 @@ const prefSource = query<HTMLInputElement>("#pref-source");
 const prefLanguage = query<HTMLSelectElement>("#pref-language");
 const titleTemplate = query<HTMLInputElement>("#title-template");
 const copyDiagnosticsButton = query<HTMLButtonElement>("#copy-diagnostics");
+const exportConfigButton = query<HTMLButtonElement>("#export-config");
+const importConfigButton = query<HTMLButtonElement>("#import-config");
+const importConfigFile = query<HTMLInputElement>("#import-config-file");
 
 void init();
 
@@ -112,6 +115,15 @@ async function init(): Promise<void> {
   targetType.addEventListener("change", updateTargetFormForProvider);
   copyDiagnosticsButton.addEventListener("click", () => {
     void copyDiagnosticsReport();
+  });
+  exportConfigButton.addEventListener("click", () => {
+    void exportConfig();
+  });
+  importConfigButton.addEventListener("click", () => {
+    importConfigFile.click();
+  });
+  importConfigFile.addEventListener("change", () => {
+    void importConfig();
   });
 
   // 即改即存：连接字段 + 偏好。change 事件在 input 失焦且值变化时触发。
@@ -563,6 +575,136 @@ async function copyDiagnosticsReport(): Promise<void> {
   } catch (error) {
     showStatus(formatUserFacingError(error, "test", settings.preferences.languagePreference), true);
   }
+}
+
+async function exportConfig(): Promise<void> {
+  try {
+    applyPreferenceFields();
+    await saveSettings(settings);
+    settings = await getSettings();
+
+    const payload = {
+      app: "Markdrop",
+      schemaVersion: 1,
+      exportedAt: new Date().toISOString(),
+      buildId: MARKDROP_BUILD_ID,
+      settings,
+    };
+
+    downloadJson(`markdrop-config-${formatDateTimeForFileName(new Date())}.json`, payload);
+    showStatus(t("options.exportConfigDone"));
+  } catch (error) {
+    showStatus(`${t("options.exportConfigFailed")} ${readErrorMessage(error)}`, true);
+  }
+}
+
+async function importConfig(): Promise<void> {
+  const file = importConfigFile.files?.[0];
+  importConfigFile.value = "";
+
+  if (!file) {
+    return;
+  }
+
+  try {
+    const imported = parseImportedSettings(JSON.parse(await file.text()));
+    const confirmed = window.confirm(t("options.importConfigConfirm"));
+    if (!confirmed) {
+      return;
+    }
+
+    await saveSettings(imported);
+    settings = await getSettings();
+    i18n = getI18n(settings.preferences.languagePreference);
+    resetTargetForm();
+    renderSettings();
+    showStatus(t("options.importConfigDone"));
+  } catch (error) {
+    showStatus(`${t("options.importConfigFailed")} ${readErrorMessage(error)}`, true);
+  }
+}
+
+function parseImportedSettings(raw: unknown): MarkdropSettings {
+  const candidate = isRecord(raw) && isRecord(raw.settings) ? raw.settings : raw;
+  if (!isRecord(candidate)) {
+    throw new Error(t("options.importConfigInvalid"));
+  }
+
+  const hasSettingsShape = ["notionToken", "feishu", "obsidian", "targets", "preferences", "defaultTargetId"].some((key) => key in candidate);
+  if (!hasSettingsShape) {
+    throw new Error(t("options.importConfigInvalid"));
+  }
+
+  const partial = candidate as Partial<MarkdropSettings>;
+  const feishu = isRecord(partial.feishu) ? (partial.feishu as Partial<MarkdropSettings["feishu"]>) : {};
+  const obsidian = isRecord(partial.obsidian) ? (partial.obsidian as Partial<MarkdropSettings["obsidian"]>) : {};
+  const preferences = isRecord(partial.preferences) ? (partial.preferences as Partial<MarkdropSettings["preferences"]>) : {};
+
+  return {
+    ...defaultSettings,
+    notionToken: typeof partial.notionToken === "string" ? partial.notionToken : defaultSettings.notionToken,
+    feishu: {
+      ...defaultSettings.feishu,
+      ...feishu,
+    },
+    obsidian: {
+      ...defaultSettings.obsidian,
+      ...obsidian,
+    },
+    targets: parseImportedTargets(partial.targets),
+    defaultTargetId: typeof partial.defaultTargetId === "string" ? partial.defaultTargetId : undefined,
+    preferences: {
+      ...defaultSettings.preferences,
+      ...preferences,
+    },
+  };
+}
+
+function parseImportedTargets(value: unknown): SaveTarget[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((target): target is Record<string, unknown> => isRecord(target) && typeof target.name === "string")
+    .map((target) => ({
+      ...target,
+      id: typeof target.id === "string" && target.id ? target.id : crypto.randomUUID(),
+    })) as SaveTarget[];
+}
+
+function downloadJson(fileName: string, data: unknown): void {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.rel = "noopener";
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function formatDateTimeForFileName(date: Date): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate()),
+    "-",
+    pad(date.getHours()),
+    pad(date.getMinutes()),
+    pad(date.getSeconds()),
+  ].join("");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function readErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function buildDiagnosticsReport(lastSave?: LastSaveState): string {
