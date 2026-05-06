@@ -838,9 +838,7 @@ function isSupportedAiHost(hostname: string): boolean {
 
 function usesDirectInlineAiButtons(hostname: string): boolean {
   return (
-    hostname === "chat.openai.com" ||
-    hostname === "chatgpt.com" ||
-    hostname.endsWith(".chatgpt.com") ||
+    isChatGptHost(hostname) ||
     hostname === "claude.ai" ||
     hostname.endsWith(".claude.ai") ||
     hostname === "gemini.google.com" ||
@@ -850,6 +848,10 @@ function usesDirectInlineAiButtons(hostname: string): boolean {
     isDeepSeekHost(hostname) ||
     isTongyiHost(hostname)
   );
+}
+
+function isChatGptHost(hostname: string): boolean {
+  return hostname === "chat.openai.com" || hostname === "chatgpt.com" || hostname.endsWith(".chatgpt.com");
 }
 
 function isDeepSeekHost(hostname: string): boolean {
@@ -967,7 +969,51 @@ function collectAiContentCandidates(): HTMLElement[] {
 }
 
 function isCapturableAiContentCandidate(node: HTMLElement): boolean {
-  return !isLikelyUserContent(node) && !isLikelyThinkingContent(node) && !isDeepSeekReasoningRegion(node) && isVisible(node);
+  if (isLikelyUserContent(node) || isDeepSeekReasoningRegion(node) || !isVisible(node)) {
+    return false;
+  }
+
+  if (isLikelyThinkingContent(node) && !isChatGptAnswerWithThinkingLead(node)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isChatGptAnswerWithThinkingLead(node: HTMLElement): boolean {
+  if (!isChatGptHost(location.hostname)) {
+    return false;
+  }
+
+  const text = compactElementText(node);
+  if (text.length < 80) {
+    return false;
+  }
+
+  const contentBlocks = collectMeaningfulAnswerBlocks(node);
+  if (contentBlocks.length >= 2) {
+    return true;
+  }
+
+  const textWithoutThinkingLead = text.replace(/^(?:thought|thinking|reasoning)\s*(?:for)?\s*\d*\s*\w*\s*[›>：:]?\s*/i, "").trim();
+  return textWithoutThinkingLead.length >= 60;
+}
+
+function collectMeaningfulAnswerBlocks(node: HTMLElement): HTMLElement[] {
+  const blockSelector = "h1, h2, h3, h4, p, li, blockquote, pre, table";
+  const blocks = [
+    ...(node.matches(blockSelector) ? [node] : []),
+    ...Array.from(node.querySelectorAll<HTMLElement>(blockSelector)),
+  ];
+
+  return blocks.filter((block) => {
+    if (block.closest(".markdrop-ai-host, .markdrop-save-overlay")) {
+      return false;
+    }
+
+    const text = compactElementText(block);
+    return text.length >= 8 && !isThinkingLeadText(text.slice(0, 160));
+  });
 }
 
 function isLikelyUserContent(node: HTMLElement): boolean {
