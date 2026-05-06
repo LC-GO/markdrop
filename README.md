@@ -20,7 +20,7 @@ ChatGPT, Claude, Gemini, DeepSeek, Doubao, and Qianwen.
 <img width="1280" height="720" alt="1" src="https://github.com/user-attachments/assets/c7b6768a-a4e4-4c26-b4b0-ff4401902a9c" />
 
 ### Save AI Answer / AI回答保存：
-img width="1280" height="720" alt="2-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/76193f7a-fa8b-4444-bb96-17fa2727c9bd" />
+<img width="1280" height="720" alt="2-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/76193f7a-fa8b-4444-bb96-17fa2727c9bd" />
 
 ## Installation / 安装
 
