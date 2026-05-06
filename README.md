@@ -2,9 +2,9 @@
 
 [中文](README.zh-CN.md) | [English](README.en.md)
 
-Markdrop is a local-first browser extension for saving selected web content and AI answers, including selected snippets and full answers, as structured notes.
+Markdrop is a local-first browser extension that saves selected web content and AI answers, including selected snippets and full answers, as structured notes in Notion, Feishu, or Obsidian.
 
-Markdrop 是一个本地优先的浏览器扩展，用来把普通网页划词内容和 AI 回答（支持划词和整篇）保存为结构化笔记。
+Markdrop 是一个本地优先的浏览器扩展，用来把普通网页划词内容和 AI 回答（支持划词和整篇）保存为 Notion / 飞书 / Obsidian 中的结构化笔记。
 
 ## Supported Destinations / 支持的保存目标
 
