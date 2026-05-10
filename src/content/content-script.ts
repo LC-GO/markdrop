@@ -249,7 +249,12 @@ function selectDirectAiSaveTargets(): Array<{ answerElement: HTMLElement; root: 
   collectAiContentCandidates()
     .map(normalizeAiAnswerElement)
     .filter((node): node is HTMLElement => Boolean(node))
-    .filter((node) => isCapturableAiContentCandidate(node) && hasAnswerContentShape(node))
+    .filter(
+      (node) =>
+        isCapturableAiContentCandidate(node) &&
+        hasAnswerContentShape(node) &&
+        !isClaudeIntermediateToolPreamble(node),
+    )
     .forEach((node) => {
       const root = findAiMessageRoot(node);
       const existing = byRoot.get(root);
@@ -878,6 +883,10 @@ function isDoubaoHost(hostname: string): boolean {
   return hostname === "www.doubao.com" || hostname === "doubao.com" || hostname.endsWith(".doubao.com");
 }
 
+function isClaudeHost(hostname: string): boolean {
+  return hostname === "claude.ai" || hostname.endsWith(".claude.ai");
+}
+
 function platformNameForHost(hostname: string): string {
   if (hostname === "gemini.google.com" || hostname.endsWith(".gemini.google.com") || hostname.includes("aistudio")) {
     return "Gemini";
@@ -978,6 +987,79 @@ function isCapturableAiContentCandidate(node: HTMLElement): boolean {
   }
 
   return true;
+}
+
+function isClaudeIntermediateToolPreamble(node: HTMLElement): boolean {
+  if (!isClaudeHost(location.hostname)) {
+    return false;
+  }
+
+  const text = compactElementText(node);
+  if (text.length < 8 || text.length > 320) {
+    return false;
+  }
+
+  if (node.querySelector("h1, h2, h3, h4, pre, table, ol, ul")) {
+    return false;
+  }
+
+  return hasClaudeToolActivityAfter(node);
+}
+
+function hasClaudeToolActivityAfter(node: HTMLElement): boolean {
+  let anchor: HTMLElement | null = node;
+  let depth = 0;
+
+  while (anchor && anchor !== document.body && anchor !== document.documentElement && depth < 5) {
+    let sibling = anchor.nextElementSibling;
+    let siblingCount = 0;
+
+    while (sibling instanceof HTMLElement && siblingCount < 8) {
+      if (sibling.classList.contains("markdrop-ai-host")) {
+        sibling = sibling.nextElementSibling;
+        siblingCount += 1;
+        continue;
+      }
+
+      if (isClaudeToolActivityNode(sibling)) {
+        return true;
+      }
+
+      const siblingText = compactElementText(sibling);
+      if (siblingText.length > 80 && hasAnswerContentShape(sibling)) {
+        break;
+      }
+
+      sibling = sibling.nextElementSibling;
+      siblingCount += 1;
+    }
+
+    anchor = anchor.parentElement;
+    depth += 1;
+  }
+
+  return false;
+}
+
+function isClaudeToolActivityNode(node: HTMLElement): boolean {
+  const text = compactElementText(node).slice(0, 260);
+  const label = elementLabel(node);
+
+  if (
+    /\b(?:created|read|edited|updated|wrote|saved|opened|generated|ran|called)\b[\s\S]{0,120}\b(?:file|document|tool|artifact|command)\b/i.test(
+      text,
+    ) ||
+    /(?:创建|读取|编辑|更新|写入|保存|打开|生成|运行|调用)[\s\S]{0,80}(?:文件|文档|工具|命令)/.test(text)
+  ) {
+    return true;
+  }
+
+  return (
+    /\b(?:tool|artifact|file|attachment|operation)\b/.test(label) &&
+    text.length > 0 &&
+    text.length <= 220 &&
+    !node.querySelector("h1, h2, h3, h4, pre, table, ol, ul")
+  );
 }
 
 function isChatGptAnswerWithThinkingLead(node: HTMLElement): boolean {
