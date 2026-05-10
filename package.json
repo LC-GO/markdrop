@@ -1,6 +1,6 @@
 {
   "name": "markdrop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Save selected web content and AI answers as Markdown to user configured note destinations.",
   "type": "module",
